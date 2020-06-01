@@ -1,9 +1,0 @@
-INFO:HabrObject:Opening url: https://habr.com/en
-INFO:HabrObject:Clicking element: ('css selector', '#search-form-btn')
-INFO:HabrObject:Input Python in input ('css selector', '#search-form-field')
-INFO:HabrObject:Opening url: https://habr.com/en
-INFO:HabrObject:Clicking element: ('css selector', '#search-form-btn')
-INFO:HabrObject:Input Python in input ('css selector', '#search-form-field')
-INFO:HabrObject:Clicking element: ('css selector', '.tabs__level.tabs__level_bottom li:nth-child(3)')
-INFO:HabrObject:Clicking element: ('partial link text', 'Read more')
-INFO:HabrObject:Check if element ('css selector', '.post__body') is present
