@@ -3,13 +3,13 @@ import logging
 from selenium import webdriver
 from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
 
-logging.basicConfig(level=logging.INFO, filename="selenium.log")
+logging.basicConfig(level=logging.INFO, filename="results/selenium.log")
 
 
 class MyListener(AbstractEventListener):
 
     def on_exception(self, exception, driver):
-        driver.save_screenshot("error.png")
+        driver.save_screenshot("results/error.png")
 
 
 def pytest_addoption(parser):
