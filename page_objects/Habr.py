@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 
 
 class Habr(BasePage):
-    URL = "https://habr.com/en"
+    URL = "https://habr.com/"
     SEARCH_BTN = (By.CSS_SELECTOR, "#search-form-btn")
     SEARCH_FILED = (By.CSS_SELECTOR, "#search-form-field")
     READ_MORE = (By.PARTIAL_LINK_TEXT, "Read more")

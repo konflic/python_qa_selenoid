@@ -1,16 +1,18 @@
 import time
+import pytest
+
 from page_objects import Habr
 
 
-def test_post_open(browser):
+@pytest.mark.parametrize("query", ["Python", "Swift"])
+def test_post_open(browser, query):
     page = Habr(browser) \
         .open() \
         .click_search() \
-        .search('Swift')
+        .search(query)
     page.filter_by_rating()
     page.read_more()
     page.is_present(page.POST_BODY)
-    time.sleep(2)
 
 
 def test_hubs_open(browser):
@@ -20,18 +22,6 @@ def test_hubs_open(browser):
         .search('Dart')
     page.select_hubs_and_companies()
     page.is_present(page.HUBS)
-    time.sleep(2)
-
-
-def test_post_open_2(browser):
-    page = Habr(browser) \
-        .open() \
-        .click_search() \
-        .search('Python')
-    page.filter_by_rating()
-    page.read_more()
-    page.is_present(page.POST_BODY)
-    time.sleep(2)
 
 
 def test_hubs_open_2(browser):
@@ -41,4 +31,3 @@ def test_hubs_open_2(browser):
         .search('Java')
     page.select_hubs_and_companies()
     page.is_present(page.HUBS)
-    time.sleep(2)
