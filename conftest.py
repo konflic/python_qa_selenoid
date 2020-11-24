@@ -28,10 +28,12 @@ def browser(request):
     caps = {
         "browserName": browser,
         "browserVersion": version,
+        "screenResolution": "1280x720",
+        "name": "Mikhail.C",
         "selenoid:options": {
             "enableVNC": vnc,
             "enableVideo": videos,
-            "enableLog": logs
+            "enableLog": logs,
         },
         'acceptSslCerts': True,
         'acceptInsecureCerts': True,
@@ -48,6 +50,9 @@ def browser(request):
         command_executor=executor_url,
         desired_capabilities=caps
     )
+
+    if not mobile:
+        driver.maximize_window()
 
     def fin():
         time.sleep(1)
