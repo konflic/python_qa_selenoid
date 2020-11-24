@@ -1,4 +1,3 @@
-import time
 import pytest
 
 from page_objects import Habr

@@ -1,4 +1,4 @@
 pytest==6.1.2
 selenium==3.141.0
-requests==2.24.0
+requests==2.25.0
 pytest-xdist==2.1.0
