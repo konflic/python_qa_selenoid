@@ -6,34 +6,35 @@ from selenium import webdriver
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--bversion", action="store", required=True)
+    parser.addoption("--executor", action="store", default="192.168.8.131")
+    parser.addoption("--bversion", action="store", default="88.0")
     parser.addoption("--vnc", action="store_true", default=False)
     parser.addoption("--logs", action="store_true", default=False)
     parser.addoption("--videos", action="store_true", default=False)
-    parser.addoption("--executor", action="store", default="localhost")
     parser.addoption("--mobile", action="store_true")
 
 
 @pytest.fixture
 def browser(request):
     browser = request.config.getoption("--browser")
-    version = request.config.getoption("--bversion")
     executor = request.config.getoption("--executor")
+    version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
     logs = request.config.getoption("--logs")
     videos = request.config.getoption("--videos")
-    executor_url = f"http://{executor}:4444/wd/hub"
     mobile = request.config.getoption("--mobile")
+
+    executor_url = f"http://{executor}:4444/wd/hub"
 
     caps = {
         "browserName": browser,
         "browserVersion": version,
         "screenResolution": "1280x720",
-        "name": "Mikhail.C",
+        "name": "Mikhail",
         "selenoid:options": {
             "enableVNC": vnc,
             "enableVideo": videos,
-            "enableLog": logs,
+            "enableLog": logs
         },
         'acceptSslCerts': True,
         'acceptInsecureCerts': True,
