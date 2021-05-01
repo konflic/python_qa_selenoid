@@ -14,19 +14,11 @@ def test_post_open(browser, query):
     page.is_present(page.POST_BODY)
 
 
-def test_hubs_open(browser):
+@pytest.mark.parametrize("query", ["Dart", "Java"])
+def test_hubs_open(browser, query):
     page = Habr(browser) \
         .open() \
         .click_search() \
         .search('Dart')
-    page.select_hubs_and_companies()
-    page.is_present(page.HUBS)
-
-
-def test_hubs_open_2(browser):
-    page = Habr(browser) \
-        .open() \
-        .click_search() \
-        .search('Java')
     page.select_hubs_and_companies()
     page.is_present(page.HUBS)

@@ -24,39 +24,45 @@ def browser(request):
     videos = request.config.getoption("--videos")
     mobile = request.config.getoption("--mobile")
 
-    executor_url = f"http://{executor}:4444/wd/hub"
+    if executor == "local":
+        caps = {'goog:chromeOptions': {}}
 
-    caps = {
-        "browserName": browser,
-        "browserVersion": version,
-        "screenResolution": "1280x720",
-        "name": "Mikhail",
-        "selenoid:options": {
-            "enableVNC": vnc,
-            "enableVideo": videos,
-            "enableLog": logs
-        },
-        'acceptSslCerts': True,
-        'acceptInsecureCerts': True,
-        'timeZone': 'Europe/Moscow',
-        'goog:chromeOptions': {
-            'args': []
+        if mobile:
+            caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
+
+        driver = webdriver.Chrome(desired_capabilities=caps)
+
+    else:
+        executor_url = f"http://{executor}:4444/wd/hub"
+
+        caps = {
+            "browserName": browser,
+            # "browserVersion": version,
+            # "screenResolution": "1280x720",
+            # "name": "Mikhail",
+            # "selenoid:options": {
+            #     "enableVNC": vnc,
+            #     "enableVideo": videos,
+            #     "enableLog": logs
+            # },
+            # 'acceptSslCerts': True,
+            # 'acceptInsecureCerts': True,
+            # 'timeZone': 'Europe/Moscow',
+            'goog:chromeOptions': {}
         }
-    }
 
-    if browser == "chrome" and mobile:
-        caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
+        if browser == "chrome" and mobile:
+            caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
 
-    driver = webdriver.Remote(
-        command_executor=executor_url,
-        desired_capabilities=caps
-    )
+        driver = webdriver.Remote(
+            command_executor=executor_url,
+            desired_capabilities=caps
+        )
 
-    if not mobile:
-        driver.maximize_window()
+        if not mobile:
+            driver.maximize_window()
 
     def fin():
-        time.sleep(1)
         driver.quit()
 
     request.addfinalizer(fin)
