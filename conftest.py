@@ -1,16 +1,10 @@
 import pytest
-import time
-
 from selenium import webdriver
 
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--executor", action="store", default="192.168.8.131")
-    parser.addoption("--bversion", action="store", default="88.0")
-    parser.addoption("--vnc", action="store_true", default=False)
-    parser.addoption("--logs", action="store_true", default=False)
-    parser.addoption("--videos", action="store_true", default=False)
+    parser.addoption("--executor", action="store", default="192.168.1.95")
     parser.addoption("--mobile", action="store_true")
 
 
@@ -18,10 +12,10 @@ def pytest_addoption(parser):
 def browser(request):
     browser = request.config.getoption("--browser")
     executor = request.config.getoption("--executor")
-    version = request.config.getoption("--bversion")
-    vnc = request.config.getoption("--vnc")
-    logs = request.config.getoption("--logs")
-    videos = request.config.getoption("--videos")
+    # version = request.config.getoption("--bversion")
+    # vnc = request.config.getoption("--vnc")
+    # logs = request.config.getoption("--logs")
+    # videos = request.config.getoption("--videos")
     mobile = request.config.getoption("--mobile")
 
     if executor == "local":
