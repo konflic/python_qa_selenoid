@@ -1,4 +1,4 @@
-import logging
+import selenium
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -27,4 +27,7 @@ class BasePage:
         find_field.send_keys(Keys.ENTER)
 
     def is_present(self, locator):
-        return self.wait.until(EC.visibility_of_element_located(locator))
+        try:
+            return self.wait.until(EC.visibility_of_element_located(locator))
+        except selenium.common.exceptions.TimeoutException:
+            raise AssertionError(f"Element {locator} not found.")

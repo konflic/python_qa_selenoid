@@ -7,3 +7,5 @@ venv/
  *.log
  *.png
 results/*
+allure-report/
+allure-results/
