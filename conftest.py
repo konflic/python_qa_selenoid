@@ -72,11 +72,11 @@ def browser(request):
             # "browserVersion": version,
             # "screenResolution": "1280x720",
             # "name": "Mikhail",
-            # "selenoid:options": {
-            #     "enableVNC": vnc,
-            #     "enableVideo": video,
-            #     "enableLog": logs
-            # },
+            "selenoid:options": {
+                "enableVNC": vnc,
+                "enableVideo": video,
+                "enableLog": logs
+            },
             # 'acceptSslCerts': True,
             # 'acceptInsecureCerts': True,
             # 'timeZone': 'Europe/Moscow',
@@ -105,24 +105,23 @@ def browser(request):
         video_url = f"http://{executor}:8080/video/{driver.session_id}.mp4"
         driver.quit()
 
-        # if request.node.status != 'passed':
-        #     if logs:
-        #         allure.attach(
-        #             name="selenoid_log_" + driver.session_id,
-        #             body=wait_url_data(log_url),
-        #             attachment_type=allure.attachment_type.TEXT)
-        #     if video:
-        #         allure.attach(
-        #             body=wait_url_data(video_url),
-        #             name="video_for_" + driver.session_id,
-        #             attachment_type=allure.attachment_type.MP4)
+        if request.node.status != 'passed':
+            if logs:
+                allure.attach(
+                    name="selenoid_log_" + driver.session_id,
+                    body=wait_url_data(log_url),
+                    attachment_type=allure.attachment_type.TEXT)
+            if video:
+                allure.attach(
+                    body=wait_url_data(video_url),
+                    name="video_for_" + driver.session_id,
+                    attachment_type=allure.attachment_type.MP4)
 
-        # Clear videos and logs from selenoid
-        # if video and wait_url_data(video_url):
-        #     requests.delete(url=video_url)
-        #
-        # if logs and wait_url_data(log_url):
-        #     requests.delete(url=log_url)
+        if video and wait_url_data(video_url):
+            requests.delete(url=video_url)
+
+        if logs and wait_url_data(log_url):
+            requests.delete(url=log_url)
 
         # with open("allure-results/environment.xml", "w+") as file:
         #     file.write(f"""<environment>
