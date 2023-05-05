@@ -1,9 +1,21 @@
+import os
+import random
 import time
 
 import allure
 import pytest
 import requests
 from selenium import webdriver
+
+
+def pytest_addoption(parser):
+    parser.addoption("--browser", action="store", default="chrome")
+    parser.addoption("--executor", action="store", default="127.0.0.1")
+    parser.addoption("--mobile", action="store_true")
+    parser.addoption("--vnc", action="store_true")
+    parser.addoption("--logs", action="store_true")
+    parser.addoption("--video", action="store_true")
+    parser.addoption("--bv")
 
 
 @allure.step("Waiting for availability {url}")
@@ -15,7 +27,7 @@ def wait_url_data(url, timeout=10):
             time.sleep(1)
             timeout -= 1
         else:
-            if 'video' in url:
+            if "video" in url:
                 return response.content
             else:
                 return response.text
@@ -27,20 +39,10 @@ def wait_url_data(url, timeout=10):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
-    if rep.outcome != 'passed':
-        item.status = 'failed'
+    if rep.outcome != "passed":
+        item.status = "failed"
     else:
-        item.status = 'passed'
-
-
-def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--executor", action="store", default="127.0.0.1")
-    parser.addoption("--mobile", action="store_true")
-    parser.addoption("--vnc", action="store_true")
-    parser.addoption("--logs", action="store_true")
-    parser.addoption("--video", action="store_true")
-    parser.addoption("--bv")
+        item.status = "passed"
 
 
 @pytest.fixture
@@ -54,10 +56,12 @@ def browser(request):
     mobile = request.config.getoption("--mobile")
 
     if executor == "local":
-        caps = {'goog:chromeOptions': {}}
+        caps = {"goog:chromeOptions": {}}
 
         if mobile:
-            caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
+            caps["goog:chromeOptions"]["mobileEmulation"] = {
+                "deviceName": "iPhone 5/SE"
+            }
 
         driver = webdriver.Chrome(desired_capabilities=caps)
 
@@ -66,17 +70,18 @@ def browser(request):
 
         caps = {
             "browserName": browser,
-            # "browserVersion": version,
+            "browserVersion": version,
             "selenoid:options": {
                 "enableVNC": vnc,
-                "name": "Mikhail",
-                "screenResolution": "1280x720",
+                "name": os.getenv("BUILD_NUMBER", str(random.randint(9000, 10000))),
+                "screenResolution": "1280x2000",
                 "enableVideo": video,
-                "enableLog": False
+                "enableLog": False,
+                "timeZone": "Europe/Moscow",
+                "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
+
             },
-            'acceptSslCerts': True,
-            'acceptInsecureCerts': True,
-            'timeZone': 'Europe/Moscow',
+            "acceptInsecureCerts": True,
             # 'goog:chromeOptions': {}
         }
 
@@ -96,12 +101,13 @@ def browser(request):
     def finalizer():
         video_url = f"http://{executor}:8080/video/{driver.session_id}.mp4"
 
-        if request.node.status != 'passed':
+        if request.node.status == "failed":
             if video:
                 allure.attach(
                     body=wait_url_data(video_url),
                     name="video_for_" + driver.session_id,
-                    attachment_type=allure.attachment_type.MP4)
+                    attachment_type=allure.attachment_type.MP4,
+                )
 
         if video and wait_url_data(video_url):
             requests.delete(url=video_url)
