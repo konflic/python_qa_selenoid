@@ -6,6 +6,8 @@ import allure
 import pytest
 import requests
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 
 def pytest_addoption(parser):
@@ -55,48 +57,42 @@ def browser(request):
     video = request.config.getoption("--video")
     mobile = request.config.getoption("--mobile")
 
-    if executor == "local":
-        caps = {"goog:chromeOptions": {}}
+    executor_url = f"http://{executor}:4444/wd/hub"
 
-        if mobile:
-            caps["goog:chromeOptions"]["mobileEmulation"] = {
-                "deviceName": "iPhone 5/SE"
-            }
+    if browser == "chrome":
+        options = ChromeOptions()
+    elif browser == "firefox":
+        options = FirefoxOptions()
 
-        driver = webdriver.Chrome(desired_capabilities=caps)
+    caps = {
+        "browserName": browser,
+        "browserVersion": version,
+        "selenoid:options": {
+            "enableVNC": vnc,
+            "name": os.getenv("BUILD_NUMBER", str(random.randint(9000, 10000))),
+            "screenResolution": "1280x2000",
+            "enableVideo": video,
+            "enableLog": False,
+            "timeZone": "Europe/Moscow",
+            "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
 
-    else:
-        executor_url = f"http://{executor}:4444/wd/hub"
+        },
+        "acceptInsecureCerts": True,
+        # 'goog:chromeOptions': {}
+    }
 
-        caps = {
-            "browserName": browser,
-            "browserVersion": version,
-            "selenoid:options": {
-                "enableVNC": vnc,
-                "name": os.getenv("BUILD_NUMBER", str(random.randint(9000, 10000))),
-                "screenResolution": "1280x2000",
-                "enableVideo": video,
-                "enableLog": False,
-                "timeZone": "Europe/Moscow",
-                "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
+    # Мобильная эмуляция
+    # if browser == "chrome" and mobile:
+    #     caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
 
-            },
-            "acceptInsecureCerts": True,
-            # 'goog:chromeOptions': {}
-        }
+    driver = webdriver.Remote(
+        command_executor=executor_url,
+        desired_capabilities=caps,
+        options=options
+    )
 
-        # Мобильная эмуляция
-        # if browser == "chrome" and mobile:
-        #     caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
-
-        driver = webdriver.Remote(
-            command_executor=executor_url,
-            desired_capabilities=caps,
-            # options=options
-        )
-
-        if not mobile:
-            driver.maximize_window()
+    if not mobile:
+        driver.maximize_window()
 
     def finalizer():
         video_url = f"http://{executor}:8080/video/{driver.session_id}.mp4"
