@@ -72,22 +72,19 @@ def browser(request):
             "name": os.getenv("BUILD_NUMBER", str(random.randint(9000, 10000))),
             "screenResolution": "1280x2000",
             "enableVideo": video,
-            "enableLog": False,
+            "enableLog": logs,
             "timeZone": "Europe/Moscow",
             "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
 
         },
         "acceptInsecureCerts": True,
-        # 'goog:chromeOptions': {}
     }
 
-    # Мобильная эмуляция
-    # if browser == "chrome" and mobile:
-    #     caps["goog:chromeOptions"]["mobileEmulation"] = {"deviceName": "iPhone 5/SE"}
+    for k, v in caps.items():
+        options.set_capability(k, v)
 
     driver = webdriver.Remote(
         command_executor=executor_url,
-        desired_capabilities=caps,
         options=options
     )
 
