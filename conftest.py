@@ -61,6 +61,8 @@ def browser(request):
 
     if browser == "chrome":
         options = ChromeOptions()
+        if mobile:
+            options.add_experimental_option("mobileEmulation", {"deviceName": "iPhone 5/SE"})
     elif browser == "firefox":
         options = FirefoxOptions()
 
