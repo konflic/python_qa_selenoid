@@ -20,31 +20,31 @@ def pytest_addoption(parser):
     parser.addoption("--bv")
 
 
-@allure.step("Waiting for availability {url}")
-def wait_url_data(url, timeout=10):
-    """Метод ожидания доступности урла"""
-    while timeout:
-        response = requests.get(url)
-        if not response.ok:
-            time.sleep(1)
-            timeout -= 1
-        else:
-            if "video" in url:
-                return response.content
-            else:
-                return response.text
-    return None
+# @allure.step("Waiting for availability {url}")
+# def wait_url_data(url, timeout=10):
+#     """Метод ожидания доступности урла"""
+#     while timeout:
+#         response = requests.get(url)
+#         if not response.ok:
+#             time.sleep(1)
+#             timeout -= 1
+#         else:
+#             if "video" in url:
+#                 return response.content
+#             else:
+#                 return response.text
+#     return None
 
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-# https://github.com/pytest-dev/pytest/issues/230#issuecomment-402580536
-def pytest_runtest_makereport(item, call):
-    outcome = yield
-    rep = outcome.get_result()
-    if rep.outcome != "passed":
-        item.status = "failed"
-    else:
-        item.status = "passed"
+# @pytest.hookimpl(tryfirst=True, hookwrapper=True)
+# # https://github.com/pytest-dev/pytest/issues/230#issuecomment-402580536
+# def pytest_runtest_makereport(item, call):
+#     outcome = yield
+#     rep = outcome.get_result()
+#     if rep.outcome != "passed":
+#         item.status = "failed"
+#     else:
+#         item.status = "passed"
 
 
 @pytest.fixture
@@ -61,25 +61,22 @@ def browser(request):
 
     if browser == "chrome":
         options = ChromeOptions()
-        if mobile:
-            options.add_experimental_option("mobileEmulation", {"deviceName": "iPhone 5/SE"})
     elif browser == "firefox":
         options = FirefoxOptions()
 
     caps = {
         "browserName": browser,
-        "browserVersion": version,
-        "selenoid:options": {
-            "enableVNC": vnc,
-            "name": os.getenv("BUILD_NUMBER", str(random.randint(9000, 10000))),
-            "screenResolution": "1280x2000",
-            "enableVideo": video,
-            "enableLog": logs,
-            "timeZone": "Europe/Moscow",
-            "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
-
-        },
-        "acceptInsecureCerts": True,
+        # "browserVersion": version,
+        # "selenoid:options": {
+        #     "enableVNC": vnc,
+        #     "name": request.node.name,
+        #     "screenResolution": "1280x2000",
+        #     "enableVideo": video,
+        #     "enableLog": logs,
+        #     "timeZone": "Europe/Moscow",
+        #     "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
+        # },
+        # "acceptInsecureCerts": True,
     }
 
     for k, v in caps.items():
@@ -94,18 +91,18 @@ def browser(request):
         driver.maximize_window()
 
     def finalizer():
-        video_url = f"http://{executor}:8080/video/{driver.session_id}.mp4"
-
-        if request.node.status == "failed":
-            if video:
-                allure.attach(
-                    body=wait_url_data(video_url),
-                    name="video_for_" + driver.session_id,
-                    attachment_type=allure.attachment_type.MP4,
-                )
-
-        if video and wait_url_data(video_url):
-            requests.delete(url=video_url)
+        # video_url = f"http://{executor}:8080/video/{driver.session_id}.mp4"
+        #
+        # if request.node.status == "failed":
+        #     if video:
+        #         allure.attach(
+        #             body=wait_url_data(video_url),
+        #             name="video_for_" + driver.session_id,
+        #             attachment_type=allure.attachment_type.MP4,
+        #         )
+        #
+        # if video and wait_url_data(video_url):
+        #     requests.delete(url=video_url)
 
         driver.quit()
 

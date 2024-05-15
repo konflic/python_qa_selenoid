@@ -1,3 +1,5 @@
+import time
+
 import selenium
 import allure
 
@@ -30,6 +32,7 @@ class BasePage:
 
     @allure.step
     def click(self, locator):
+        time.sleep(0.5)
         self.__wait_element(locator).click()
 
     @allure.step
