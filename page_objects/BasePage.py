@@ -1,8 +1,6 @@
 import time
 
 import selenium
-import allure
-
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 import selenium.webdriver.support.expected_conditions as EC
@@ -26,16 +24,13 @@ class BasePage:
             )
             raise AssertionError(f"Element {locator} not found.")
 
-    @allure.step
     def open(self, url):
         self.driver.get(url)
 
-    @allure.step
     def click(self, locator):
         time.sleep(0.5)
         self.__wait_element(locator).click()
 
-    @allure.step
     def input_and_submit(self, locator, value):
         find_field = self.__wait_element(locator)
         find_field.click()
@@ -43,6 +38,5 @@ class BasePage:
         find_field.send_keys(value)
         find_field.send_keys(Keys.ENTER)
 
-    @allure.step
     def is_present(self, locator):
         self.__wait_element(locator)

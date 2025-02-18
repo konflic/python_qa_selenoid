@@ -1,11 +1,11 @@
 #!/bin/bash
 
-FILE=env/
+FILE=venv/
 
 if [ ! -d "$FILE" ]; then
-    python3 -m venv env
+    python3 -m venv venv
 fi
 
-source env/bin/activate &&
+source venv/bin/activate &&
 pip install -U pip &&
 pip install -Ur requirements.txt
