@@ -8,4 +8,4 @@ fi
 
 source env/bin/activate &&
 pip install -U pip &&
-pip install -Ur requirements.txt --use-feature=2020-resolver
+pip install -Ur requirements.txt
